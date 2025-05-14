@@ -4,6 +4,7 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 
 const booksRoutes = require("./routes/books");
+const userRoutes = require("./routes/user");
 
 mongoose
   .connect(process.env.MONGO_URI, {
@@ -27,5 +28,6 @@ app.use((req, res, next) => {
   next();
 });
 app.use("/api/books", booksRoutes);
+app.use("/api/auth", userRoutes);
 
 module.exports = app;
