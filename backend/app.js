@@ -2,8 +2,8 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const mongoose = require("mongoose");
-const Book = require("./models/Book");
-const booksData = require("../public/data/data.json");
+
+const booksRoutes = require("./routes/books");
 
 mongoose
   .connect(process.env.MONGO_URI, {
@@ -26,20 +26,6 @@ app.use((req, res, next) => {
   );
   next();
 });
-
-app.post("/api/books", (req, res, next) => {
-  delete req.body._id;
-  const book = new Book({
-    ...req.body,
-  });
-  book
-    .save()
-    .then(() => res.status(201).json({ message: "Objet enregistré" }))
-    .catch((error) => res.status(400).json({ error }));
-});
-
-app.get("/api/books", (req, res, next) => {
-  res.status(200).json(booksData);
-});
+app.use("/api/books", booksRoutes);
 
 module.exports = app;
