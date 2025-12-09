@@ -38,7 +38,7 @@ exports.modifyBook = async (req, res) => {
   try {
     const book = await Book.findOne({ _id: req.params.id });
     if (book.userId !== req.auth.userId) {
-      return res.status(401).json({ message: "Non autorisé" });
+      return res.status(403).json({ message: "Non autorisé" });
     }
     let bookObject;
     if (req.file) {
@@ -74,7 +74,7 @@ exports.deleteBook = (req, res, next) => {
   Book.findOne({ _id: req.params.id })
     .then((book) => {
       if (book.userId != req.auth.userId) {
-        res.status(401).json({ message: "Non autorisé" });
+        res.status(403).json({ message: "Non autorisé" });
       } else {
         const filename = book.imageUrl.split("/images/")[1];
         fs.unlink(`images/${filename}`, () => {
@@ -101,4 +101,17 @@ exports.getAllBooks = (req, res, next) => {
   Book.find()
     .then((books) => res.status(200).json(books))
     .catch((error) => res.status(400).json({ error }));
+};
+
+exports.rateBook = async (req, res) => {
+  const book = await Book.findOne({ _id: req.params.id });
+  if (!book) {
+    return res.status(404).json({ message: "Livre non trouvé." });
+  }
+  const existingRating = book.ratings.find(
+    (rating) => rating.userId === req.auth.userId
+  );
+  if (existingRating) {
+    return res.status(403).json({ message: "Vous avez déjà noté ce livre." });
+  }
 };
