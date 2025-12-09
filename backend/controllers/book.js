@@ -1,3 +1,4 @@
+const exp = require("constants");
 const Book = require("../models/Book");
 const fs = require("fs");
 const fsPromises = require("fs").promises;
@@ -113,5 +114,33 @@ exports.rateBook = async (req, res) => {
   );
   if (existingRating) {
     return res.status(403).json({ message: "Vous avez déjà noté ce livre." });
+  }
+  const newRating = {
+    userId: req.auth.userId,
+    grade: req.body.rating,
+  };
+  book.ratings.push(newRating);
+  const totalRatings = book.ratings.length;
+  const sumRatings = book.ratings.reduce(
+    (acc, rating) => acc + rating.grade,
+    0
+  );
+  book.averageRating = sumRatings / totalRatings;
+  await Book.updateOne(
+    { _id: req.params.id },
+    {
+      ratings: book.ratings,
+      averageRating: book.averageRating,
+    }
+  );
+
+  res.status(200).json({ message: "Note mise à jour !" });
+};
+exports.getBestRatedBooks = async (req, res) => {
+  try {
+    const books = await Book.find().sort({ averageRating: -1 }).limit(3);
+    res.status(200).json(books);
+  } catch (error) {
+    res.status(400).json({ error });
   }
 };
