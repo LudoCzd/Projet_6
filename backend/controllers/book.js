@@ -126,15 +126,9 @@ exports.rateBook = async (req, res) => {
     0
   );
   book.averageRating = sumRatings / totalRatings;
-  await Book.updateOne(
-    { _id: req.params.id },
-    {
-      ratings: book.ratings,
-      averageRating: book.averageRating,
-    }
-  );
+  const bookUpdated = await book.save();
 
-  res.status(200).json({ message: "Note mise à jour !" });
+  res.status(200).json(bookUpdated);
 };
 exports.getBestRatedBooks = async (req, res) => {
   try {
