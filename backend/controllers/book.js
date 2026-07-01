@@ -6,6 +6,7 @@ const path = require("path");
 const sharp = require("sharp");
 
 exports.createBook = (req, res) => {
+
   const bookObject = JSON.parse(req.body.book);
   delete bookObject._id;
   delete bookObject._userId;
@@ -83,7 +84,7 @@ exports.deleteBook = (req, res, next) => {
             .then(() => {
               res.status(200).json({ message: "Objet supprimé" });
             })
-            .catch((error) => res.status(401).json({ error }));
+            .catch((error) => res.status(500).json({ error }));
         });
       }
     })
