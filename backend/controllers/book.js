@@ -1,4 +1,3 @@
-const exp = require("constants");
 const Book = require("../models/Book");
 const fs = require("fs");
 const fsPromises = require("fs").promises;
@@ -59,7 +58,7 @@ exports.modifyBook = async (req, res) => {
         imageUrl: `${req.protocol}://${req.get("host")}/images/${filename}`,
       };
     } else {
-      bookObject = { ...req.body };
+      bookObject = {...req.body };
     }
     delete bookObject._userId;
     await Book.updateOne(
