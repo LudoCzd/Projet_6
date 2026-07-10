@@ -71,7 +71,7 @@ exports.modifyBook = async (req, res) => {
   }
 };
 
-exports.deleteBook = (req, res, next) => {
+exports.deleteBook = (req, res) => {
   Book.findOne({ _id: req.params.id })
     .then((book) => {
       if (book.userId != req.auth.userId) {
@@ -92,13 +92,13 @@ exports.deleteBook = (req, res, next) => {
     });
 };
 
-exports.getOneBook = (req, res, next) => {
+exports.getOneBook = (req, res) => {
   Book.findOne({ _id: req.params.id })
     .then((book) => res.status(200).json(book))
     .catch((error) => res.status(404).json({ error }));
 };
 
-exports.getAllBooks = (req, res, next) => {
+exports.getAllBooks = (req, res) => {
   Book.find()
     .then((books) => res.status(200).json(books))
     .catch((error) => res.status(400).json({ error }));
